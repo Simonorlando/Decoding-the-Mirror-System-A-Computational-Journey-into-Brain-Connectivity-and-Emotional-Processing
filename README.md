@@ -38,8 +38,11 @@ __Pathology Prediction__
 The findings of this study could support the development of predictive models for neuropsychiatric disorders such as autism and schizophrenia. Advanced machine learning techniques are proposed, including:
 
 __Support Vector Machine (SVM)__,
+
 __Random Forest__,
+
 __Graph Neural Networks (GNN)__.
+
 These approaches aim to predict pathological conditions based on the functional characteristics of the mirror system.
 Computational Models of the Nervous System
 Building computational models of the nervous system, informed by this study, is a crucial step toward understanding brain functions. These models could provide valuable tools for simulating and studying neural networks under both normal and pathological conditions.
