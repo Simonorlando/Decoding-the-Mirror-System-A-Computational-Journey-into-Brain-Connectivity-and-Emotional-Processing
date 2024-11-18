@@ -53,9 +53,17 @@ nibabel, numpy, pandas, matplotlib, nilearn, seaborn.
 Brain Atlases:
 Specific brain atlas used for defining and mapping regions of interest.
 Usage Instructions
+
 Run the notebook to import and preprocess the fMRI data.
 Analyze BOLD signal time series with a focus on mirror system areas.
 Construct and compare graphs to interpret modular results.
 Use the findings to explore future applications, including neural network modeling and pathology prediction.
+
+## How to Clone the Repository
+
+1. Open a terminal or command prompt.
+2. Clone the repository by running:
+   ```bash
+   git clone https://github.com/<your-username>/<repository-name>.git
 
 This README provides a comprehensive and discursive guide to the project, emphasizing its potential impact on neuroscience research and clinical applications.
