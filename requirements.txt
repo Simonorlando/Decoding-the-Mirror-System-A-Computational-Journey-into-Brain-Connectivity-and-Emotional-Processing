@@ -1,0 +1,13 @@
+IPython
+community
+ipywidgets
+matplotlib
+networkx
+nibabel
+nilearn
+numpy
+pandas
+plotly
+scipy
+seaborn
+statsmodels
