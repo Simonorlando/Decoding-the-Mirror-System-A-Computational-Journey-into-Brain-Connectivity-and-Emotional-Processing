@@ -4,7 +4,8 @@
 This project focuses on the analysis of functional MRI (fMRI) data collected during an emotion recognition task. The primary objective is to study the role of the mirror system within the brain by mapping its key areas, analyzing BOLD signals, and comparing its organization with that of the entire brain. Additionally, graph-based models are developed to highlight the modular organization and connectivity of cerebral regions.
 
 ## Workflow Steps
-Data Import
+__Data Import__
+
 fMRI data were imported in NIfTI format, and the dataset dimensions were analyzed to ensure quality and consistency. This step provided an understanding of the 3D data structure (e.g., 256x256x256 voxels).
 
 ## Mapping the Mirror System
@@ -22,6 +23,7 @@ A correlation matrix was constructed to compare the activity of the mirror syste
 ## Graph Construction
 
 __Mirror System Graph__: A graph representing the connections within the mirror system areas.
+
 __Global Graph__: A graph including all brain areas mapped in the atlas.
 Graph Comparison
 
@@ -31,7 +33,8 @@ Most areas of the mirror system belonged to the same module.
 Three areas of the mirror system were part of a separate module, suggesting a unique functionality compared to the rest of the mirror system.
 
 ## Implications and Future Directions
-Pathology Prediction
+__Pathology Prediction__
+
 The findings of this study could support the development of predictive models for neuropsychiatric disorders such as autism and schizophrenia. Advanced machine learning techniques are proposed, including:
 
 __Support Vector Machine (SVM)__,
