@@ -1,23 +1,11 @@
 is_subgraph = nx.is_isomorphic(G, G2.subgraph(G.nodes))
 print(f"Is G a subgraph of G2? {is_subgraph}")
 
-
-# In[111]:
-
-
 node_overlap = len(set(G2.nodes) & set(G.nodes)) / len(G2.nodes)
 print(f"Percentuale di nodi di G in G2: {node_overlap * 100:.2f}%")
 
-
-# In[112]:
-
-
 edge_overlap = len(set(G2.edges) & set(G.edges)) / len(G2.edges)
 print(f"Percentuale di archi di G in G2: {edge_overlap * 100:.2f}%")
-
-
-# In[113]:
-
 
 pos = nx.spring_layout(G2, seed=42)  # Seed per layout stabile
 
@@ -33,9 +21,6 @@ nx.draw(
 plt.title("Grafo specchio sovrapposto", fontsize=16)
 
 plt.show()
-
-
-# In[114]:
 
 
 def calculate_graph_metrics(graph):
