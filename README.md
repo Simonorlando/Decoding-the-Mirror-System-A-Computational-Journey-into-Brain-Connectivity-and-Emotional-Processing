@@ -64,6 +64,7 @@ Use the findings to explore future applications, including neural network modeli
 1. Open a terminal or command prompt.
 2. Clone the repository by running:
    ```bash
-   git clone https://github.com/<your-username>/<repository-name>.git
+   git clone https://github.com/Simonorlando/Decoding-the-Mirror-System-A-Computational-Journey-into-Brain-Connectivity-and-Emotional-Processing.git
+
 
 This README provides a comprehensive and discursive guide to the project, emphasizing its potential impact on neuroscience research and clinical applications.
