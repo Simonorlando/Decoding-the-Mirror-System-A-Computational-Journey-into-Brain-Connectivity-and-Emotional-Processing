@@ -10,9 +10,6 @@ plt.title("Matrice di Correlazione tra Regioni")
 plt.show()
 
 
-# In[61]:
-
-
 correlations = correlation_matrix.values[np.triu_indices_from(correlation_matrix, k=1)]
 
 mean_correlation = np.mean(correlations)
@@ -20,9 +17,6 @@ std_correlation = np.std(correlations)
 
 print(f"Media delle correlazioni: {mean_correlation:.2f}")
 print(f"Deviazione standard delle correlazioni: {std_correlation:.2f}")
-
-
-# In[62]:
 
 
 plt.figure(figsize=(10, 6))
@@ -34,8 +28,6 @@ plt.grid(axis="y", linestyle="--", alpha=0.7)
 plt.tight_layout()
 plt.show()
 
-
-# In[63]:
 
 
 high_correlation = correlations[correlations >= 0.8]
@@ -54,9 +46,6 @@ print(medium_correlation)
 
 print("\nValori di correlazioni basse:")
 print(low_correlation)
-
-
-# In[64]:
 
 
 # Array dei valori di correlazione alta
@@ -88,9 +77,6 @@ for i, value in enumerate(top_3_correlation, 1):
     print(f"{i}. {value:.2f}")
 
 
-# In[65]:
-
-
 correlation_matrix = data.corr()
 
 mask = np.triu(np.ones_like(correlation_matrix, dtype=bool), k=1)
@@ -110,8 +96,6 @@ plt.yticks(rotation=0, fontsize=10)
 
 plt.show()
 
-
-# In[66]:
 
 
 high_correlation_indices = np.where(correlation_matrix >= 0.98)
