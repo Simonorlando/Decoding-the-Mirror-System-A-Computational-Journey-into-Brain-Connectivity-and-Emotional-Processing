@@ -1,13 +1,6 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 # # Analisi fMRI task riconoscimento emozioni
 
 # ## Librerie
-
-# In[1]:
-
-
 import nibabel as nib
 import numpy as np
 import pandas as pd
@@ -42,23 +35,14 @@ from matplotlib.colors import LinearSegmentedColormap
 
 # ## Importare file nii e mostrare sezioni principali 
 
-# In[2]:
-
-
-file_path = '/Users/digitalangels/Desktop/wrsub-01_task-emotionalfaces_run-1_bold.nii'
+file_path = '~/wrsub-01_task-emotionalfaces_run-1_bold.nii'
 fmri_img = nib.load(file_path)
 fmri_data = fmri_img.get_fdata()
 
 
-# In[3]:
-
-
 timepoint = 10
 fmri_volume = fmri_data[:, :, :, timepoint]
-fmri_volume_mean = np.mean(fmri_data, axis=3)  # Media su tutte le scansioni temporali
-
-
-# In[4]:
+fmri_volume_mean = np.mean(fmri_data, axis=3)  
 
 
 x_center = fmri_volume.shape[0] // 2
@@ -89,14 +73,9 @@ plt.tight_layout()
 plt.show()
 
 
-# In[5]:
-
 
 dim_x, dim_y, dim_z, dim_t = fmri_data.shape
 print(f"Dimensioni fMRI: {fmri_data.shape} (x, y, z, tempo)")
-
-
-# In[6]:
 
 
 fmri_3d = fmri_img.slicer[..., 0]  # Primo volume temporale (indice 0)
@@ -106,35 +85,20 @@ interactive_display
 
 # ## Importare atlante e creare maschera 
 
-# In[7]:
-
-
 juelich_atlas = datasets.fetch_atlas_juelich('maxprob-thr25-1mm')
 juelich_atlas_img = juelich_atlas.maps  # Questo è già un oggetto NIfTI
 juelich_data = juelich_atlas_img.get_fdata()
 print(f"Dimensioni dell'atlante Juelich: {juelich_data.shape} (x, y, z)")
 
 
-# In[8]:
-
-
 juelich_areas_of_interest = [4, 5, 6, 7, 14, 15, 16, 17, 18, 19, 20, 27, 31, 32, 44, 45, 46, 47]
-
-
-# In[9]:
 
 
 juelich_data = juelich_atlas_img.get_fdata() 
 print(f"Dimensioni dell'atlante Juelich: {juelich_data.shape}")
 
 
-# In[10]:
-
-
 juelich_areas_of_interest = [4, 5, 6, 7, 14, 15, 16, 17, 18, 19, 20, 27, 31, 32, 44, 45, 46, 47]
-
-
-# In[11]:
 
 
 juelich_mask = np.zeros_like(juelich_data, dtype=np.int16)
@@ -145,13 +109,7 @@ for region in juelich_areas_of_interest:
 print(f"Valori unici nella maschera originale: {np.unique(juelich_mask)}")
 
 
-# In[12]:
-
-
 juelich_mask_img = nib.Nifti1Image(juelich_mask, affine=juelich_atlas_img.affine)
-
-
-# In[13]:
 
 
 resampled_mask_img = resample_to_img(
@@ -160,15 +118,8 @@ resampled_mask_img = resample_to_img(
     interpolation="nearest"
 )
 
-
-# In[14]:
-
-
 resampled_mask_data = resampled_mask_img.get_fdata().astype(np.int16)
 print(f"Valori unici nella maschera resample-ata: {np.unique(resampled_mask_data)}")
-
-
-# In[15]:
 
 
 matching_regions = [region for region in np.unique(resampled_mask_data) if region in juelich_areas_of_interest]
@@ -179,14 +130,8 @@ if len(matching_regions) == 0:
     raise ValueError("Nessuna regione di interesse trovata nella maschera resample-ata.")
 
 
-# In[16]:
-
-
 fmri_mean_data = np.mean(fmri_data, axis=3)  # Media lungo l'asse temporale
 fmri_3d = nib.Nifti1Image(fmri_mean_data, affine=fmri_img.affine) 
-
-
-# In[17]:
 
 
 plotting.plot_roi(
@@ -199,9 +144,6 @@ plotting.plot_roi(
     alpha=0.6  # Trasparenza
 )
 plotting.show()
-
-
-# In[18]:
 
 
 fmri_3d = fmri_img.slicer[..., 0]  # Volume temporale 0
@@ -228,16 +170,9 @@ interactive_display
 
 # ## Calcolo e visualizzazione media varianza segnale Bold per finestre temporali 
 
-# In[19]:
-
-
 window_step = 10  # Passo tra i volumi temporali
 selected_volumes = list(range(0, fmri_data.shape[3], window_step)) 
 num_windows = len(selected_volumes)
-
-
-# In[20]:
-
 
 variance_per_window = []
 for vol in selected_volumes:
@@ -245,21 +180,9 @@ for vol in selected_volumes:
     window_data = fmri_data[..., vol]  
     variance_per_window.append(window_data)  
 
-
-# In[21]:
-
-
 variance_per_window = np.stack(variance_per_window, axis=3)
 
-
-# In[22]:
-
-
 mean_variance = [np.mean(variance_per_window[..., i]) for i in range(num_windows)]
-
-
-# In[23]:
-
 
 plt.figure(figsize=(10, 6))
 plt.plot(selected_volumes, mean_variance, marker='o', linestyle='-', color='b')  # Volumi sull'asse x
@@ -270,21 +193,11 @@ plt.grid(True)
 plt.show()
 
 
-# In[24]:
-
-
 window_size = 25  # Numero di volumi per finestra
 num_windows = fmri_data.shape[3] // window_size  # Numero di finestre
 
 
-# In[25]:
-
-
 variance_per_window = []
-
-
-# In[26]:
-
 
 for i in range(num_windows):
     start = i * window_size
@@ -294,20 +207,9 @@ for i in range(num_windows):
     variance_per_window.append(window_variance)
 
 
-# In[27]:
-
-
 variance_per_window = np.stack(variance_per_window, axis=3)
 
-
-# In[28]:
-
-
 mean_variance = [np.mean(variance_per_window[..., i]) for i in range(num_windows)]
-
-
-# In[29]:
-
 
 plt.figure(figsize=(10, 6))
 plt.plot(range(num_windows), mean_variance, marker='o', linestyle='-', color='b')  # Indici delle finestre sull'asse x
@@ -318,16 +220,9 @@ plt.grid(True)
 plt.show()
 
 
-# In[30]:
-
-
 normalized_data = (variance_per_window[..., 0] - np.min(variance_per_window[..., 0])) / (
     np.max(variance_per_window[..., 0]) - np.min(variance_per_window[..., 0])
 )
-
-
-# In[31]:
-
 
 num_windows = 6
 window_indices = np.linspace(0, variance_per_window.shape[3] - 1, num_windows, dtype=int)
@@ -377,11 +272,7 @@ fig.update_layout(
 
 # Esportazione in HTML
 fig.write_html("bold_signal_interactive.html")
-
 print("Il grafico è stato salvato come 'bold_signal_interactive.html'. Aprilo nel browser per visualizzarlo.")
-
-
-# In[32]:
 
 
 z_center = fmri_data.shape[2] // 2  
@@ -401,33 +292,14 @@ plt.show()
 
 # ## Serie temporale segnale globale vs maschera
 
-# In[33]:
-
-
 mask = resampled_mask_data.astype(bool)
-
-
-# In[34]:
-
 
 if not np.any(mask):
     raise ValueError("La maschera è vuota. Controlla i valori in 'resampled_mask_data'.")
-
-
-# In[35]:
-
+    
 
 global_bold = [np.mean(variance_per_window[..., i]) for i in range(variance_per_window.shape[3])]
-
-
-# In[36]:
-
-
 masked_bold = [np.mean(variance_per_window[..., i][mask]) for i in range(variance_per_window.shape[3])]
-
-
-# In[37]:
-
 
 plt.figure(figsize=(10, 6))
 plt.plot(global_bold, label='Segnale Globale', marker='o')
@@ -439,101 +311,34 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-
-# In[38]:
-
-
 adf_global = adfuller(global_bold)
 adf_masked = adfuller(masked_bold)
-
-
-# In[39]:
-
-
 kpss_global = kpss(global_bold, regression='c', nlags="legacy")
 kpss_masked = kpss(masked_bold, regression='c', nlags="legacy")
-
-
-# In[40]:
-
-
 ks_stat, ks_p_value = ks_2samp(global_bold, masked_bold)
-
-
-# In[41]:
-
-
 anderson_stat, _, _ = anderson_ksamp([global_bold, masked_bold])
-
-
-# In[42]:
-
-
 t_stat, t_p_value = ttest_ind(global_bold, masked_bold, equal_var=False)
-
-
-# In[43]:
-
-
 mw_stat, mw_p_value = mannwhitneyu(global_bold, masked_bold, alternative='two-sided')
-
-
-# In[44]:
-
-
 levene_stat, levene_p_value = levene(global_bold, masked_bold)
-
-
-# In[45]:
-
-
 bartlett_stat, bartlett_p_value = bartlett(global_bold, masked_bold)
-
-
-# In[46]:
-
 
 mean_diff = np.mean(masked_bold) - np.mean(global_bold)
 pooled_std = np.sqrt((np.std(global_bold, ddof=1)**2 + np.std(masked_bold, ddof=1)**2) / 2)
 cohens_d = mean_diff / pooled_std
 
-
-# In[47]:
-
-
 pearson_corr, pearson_p_value = pearsonr(global_bold, masked_bold)
-
-
-# In[48]:
-
-
 spearman_corr, spearman_p_value = spearmanr(global_bold, masked_bold)
-
-
-# In[49]:
-
 
 print(f"T-test: p-value = {t_p_value}")
 print(f"Mann-Whitney U test: p-value = {mw_p_value}")
-
-
-# In[50]:
-
 
 print(f"ADF Test (Globale): p-value = {adf_global[1]}")
 print(f"ADF Test (Maschera): p-value = {adf_masked[1]}")
 print(f"KPSS Test (Globale): p-value = {kpss_global[1]}")
 print(f"KPSS Test (Maschera): p-value = {kpss_masked[1]}")
 
-
-# In[51]:
-
-
 print(f"Correlazione di Pearson: coefficiente = {pearson_corr}, p-value = {pearson_p_value}")
 print(f"Correlazione di Spearman: coefficiente = {spearman_corr}, p-value = {spearman_p_value}")
-
-
-# In[52]:
 
 
 signal_df = pd.DataFrame({
@@ -560,9 +365,6 @@ plt.grid(axis='y', alpha=0.7)
 plt.show()
 
 
-# In[53]:
-
-
 plt.figure(figsize=(10, 6))
 plt.plot(global_bold, label="Globale", marker='o', linestyle='-', color='blue', alpha=0.7)
 plt.plot(masked_bold, label="Maschera", marker='x', linestyle='--', color='orange', alpha=0.7)
@@ -576,8 +378,6 @@ plt.ylabel("Intensità Media del Segnale")
 plt.legend()
 plt.grid(True, alpha=0.5)
 plt.show()
-
-
 
 
 atlas = fetch_atlas_juelich("maxprob-thr0-1mm")
@@ -594,9 +394,6 @@ for region, label in regions_with_labels.items():
     print(f"{region} -> {label}")
 
 
-# In[125]:
-
-
 region_series = {}
 
 for region, label in regions_with_labels.items():
@@ -611,9 +408,6 @@ for region, label in regions_with_labels.items():
     region_series[label] = series_for_region
 
 
-# In[126]:
-
-
 plt.figure(figsize=(12, 6))
 
 for region, label in regions_with_labels.items():
@@ -626,9 +420,6 @@ plt.legend(loc="upper right", bbox_to_anchor=(1.3, 1), fontsize=8)
 plt.grid(True)
 plt.tight_layout()
 plt.show()
-
-
-# In[57]:
 
 
 num_regions = len(regions_with_labels)
@@ -654,8 +445,6 @@ plt.suptitle("Serie Temporali delle Regioni del sistema specchio", fontsize=16)
 plt.show()
 
 
-# In[58]:
-
 
 region_activation = {
     label: {
@@ -672,8 +461,6 @@ for region, values in sorted_regions[:3]:
     print(f"Regione: {region} - Attivazione Media: {values['mean']:.2f}, Attivazione Massima: {values['max']:.2f}")
 
 
-# In[59]:
-
 
 regions_sorted = [region for region, _ in sorted_regions]
 means_sorted = [values['mean'] for _, values in sorted_regions]
@@ -689,9 +476,6 @@ plt.show()
 
 # ## Correlazioni regioni cerebrali maschera
 
-# In[60]:
-
-
 data = pd.DataFrame(region_series)
 
 correlation_matrix = data.corr()
@@ -700,9 +484,6 @@ plt.figure(figsize=(14, 10))
 sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="coolwarm", cbar=True)
 plt.title("Matrice di Correlazione tra Regioni")
 plt.show()
-
-
-# In[61]:
 
 
 correlations = correlation_matrix.values[np.triu_indices_from(correlation_matrix, k=1)]
@@ -714,9 +495,6 @@ print(f"Media delle correlazioni: {mean_correlation:.2f}")
 print(f"Deviazione standard delle correlazioni: {std_correlation:.2f}")
 
 
-# In[62]:
-
-
 plt.figure(figsize=(10, 6))
 plt.hist(correlations, bins=20, color="skyblue", edgecolor="black", alpha=0.7)
 plt.title("Distribuzione delle Correlazioni del sistema spcchio", fontsize=14)
@@ -726,8 +504,6 @@ plt.grid(axis="y", linestyle="--", alpha=0.7)
 plt.tight_layout()
 plt.show()
 
-
-# In[63]:
 
 
 high_correlation = correlations[correlations >= 0.8]
@@ -746,9 +522,6 @@ print(medium_correlation)
 
 print("\nValori di correlazioni basse:")
 print(low_correlation)
-
-
-# In[64]:
 
 
 # Array dei valori di correlazione alta
@@ -780,7 +553,6 @@ for i, value in enumerate(top_3_correlation, 1):
     print(f"{i}. {value:.2f}")
 
 
-# In[65]:
 
 
 correlation_matrix = data.corr()
@@ -801,9 +573,6 @@ plt.xticks(rotation=90, fontsize=10)
 plt.yticks(rotation=0, fontsize=10)
 
 plt.show()
-
-
-# In[66]:
 
 
 high_correlation_indices = np.where(correlation_matrix >= 0.98)
@@ -831,9 +600,6 @@ for pair in low_correlation_pairs:
 
 
 # ## Grafo maschera 
-
-# In[67]:
-
 
 G = nx.Graph()
 
@@ -896,8 +662,6 @@ plt.axis('off')
 plt.show()
 
 
-# In[68]:
-
 
 areas_in_mask = np.unique(resampled_mask_data[resampled_mask_data > 0])
 
@@ -921,8 +685,6 @@ for area in areas_in_mask:
 for area, coord in coordinates_3d.items():
     print(f"Area {area}: Coordinate 3D = {coord}")
 
-
-# In[69]:
 
 
 # Dati delle coordinate (x, y) delle aree cerebrali (estratte da 3D)
@@ -1015,9 +777,6 @@ plt.show()
 
 # ## Analisi del grafo maschera 
 
-# In[70]:
-
-
 num_nodes = G.number_of_nodes()
 num_edges = G.number_of_edges()
 density = nx.density(G)
@@ -1038,14 +797,8 @@ print(f"Diametro del grafo: {diameter}")
 print(f"Lunghezza media del cammino più breve: {avg_shortest_path}")
 
 
-# In[71]:
-
-
 degree_centrality = nx.degree_centrality(G)
 betweenness_centrality = nx.betweenness_centrality(G)
-
-
-# In[72]:
 
 
 sorted_degree = sorted(degree_centrality.items(), key=lambda x: x[1], reverse=True)
@@ -1062,8 +815,6 @@ for node, value in sorted_betweenness[:5]:
     print(f"{node}: {value}")
 
 
-# In[73]:
-
 
 node_corr_high = {node: 0 for node in G.nodes}
 for edge in high_corr_edges:
@@ -1077,14 +828,8 @@ for i, (node, count) in enumerate(top_high_corr_nodes[:5]):
     print(f"{i+1}. {node}: {count} archi")
 
 
-# In[74]:
-
 
 partition = community_louvain.best_partition(G)
-
-
-# In[75]:
-
 
 pos = nx.spring_layout(G, seed=42, k=0.2)  
 
@@ -1122,16 +867,10 @@ for community, nodes in partition.items():
 
 # ## Maschera con tutte le regioni
 
-# In[76]:
-
-
 juelich_atlas = datasets.fetch_atlas_juelich('maxprob-thr25-1mm')
 juelich_atlas_img = juelich_atlas.maps  # Oggetto NIfTI
 juelich_data = juelich_atlas_img.get_fdata()
 print(f"Dimensioni dell'atlante Juelich: {juelich_data.shape} (x, y, z)")
-
-
-# In[77]:
 
 
 all_regions = np.unique(juelich_data)
@@ -1139,13 +878,7 @@ all_regions = all_regions[all_regions > 0]
 print(f"Regioni disponibili nell'atlante: {all_regions}")
 
 
-# In[78]:
-
-
 juelich_full_mask = np.zeros_like(juelich_data, dtype=np.int16)
-
-
-# In[79]:
 
 
 for region in all_regions:
@@ -1155,13 +888,7 @@ for region in all_regions:
 print(f"Valori unici nella maschera completa: {np.unique(juelich_full_mask)}")
 
 
-# In[80]:
-
-
 juelich_full_mask_img = nib.Nifti1Image(juelich_full_mask, affine=juelich_atlas_img.affine)
-
-
-# In[81]:
 
 
 resampled_full_mask_img = resample_to_img(
@@ -1171,14 +898,9 @@ resampled_full_mask_img = resample_to_img(
 )
 
 
-# In[82]:
-
-
 resampled_full_mask_data = resampled_full_mask_img.get_fdata().astype(np.int16)
 print(f"Valori unici nella maschera resample-ata: {np.unique(resampled_full_mask_data)}")
 
-
-# In[83]:
 
 
 if len(fmri_img.shape) == 4:
@@ -1198,9 +920,6 @@ plot_roi(
 plt.show()
 
 
-# In[84]:
-
-
 resampled_regions = np.unique(resampled_full_mask_data)
 resampled_regions = resampled_regions[resampled_regions > 0]  # Escludi lo sfondo (0)
 
@@ -1216,21 +935,12 @@ else:
 
 # ## correlazioni e serie temporali maschera completa 
 
-# In[85]:
-
-
 masker = NiftiLabelsMasker(labels_img=resampled_full_mask_img, standardize=True)
 time_series = masker.fit_transform(fmri_img)
 
 
-# In[86]:
-
-
 correlation_matrix = np.corrcoef(time_series.T)  
 num_areas = correlation_matrix.shape[0]
-
-
-# In[87]:
 
 
 correlation_values = correlation_matrix[np.triu_indices_from(correlation_matrix, k=1)]
@@ -1244,19 +954,10 @@ plt.grid(axis='y', alpha=0.75)
 plt.show()
 
 
-# In[88]:
-
-
 juelich_labels = juelich_atlas.labels
 
 
-# In[89]:
-
-
 region_index_to_name = {index: name for index, name in enumerate(juelich_labels)}
-
-
-# In[90]:
 
 
 pairs_named = []
@@ -1269,31 +970,11 @@ for i in range(correlation_matrix.shape[0]):
             pairs_named.append((region1, region2, correlation))
 
 
-# In[91]:
-
-
 pairs_named_df = pd.DataFrame(pairs_named, columns=["Regione 1", "Regione 2", "Correlazione"])
-
-
-# In[92]:
-
-
 pairs_named_df = pairs_named_df.sort_values(by="Correlazione", ascending=True)
-
-
-# In[93]:
-
-
 pairs_named_df
 
-
-# In[94]:
-
-
 pairs_named_df.describe()
-
-
-# In[95]:
 
 
 mean_correlation = pairs_named_df["Correlazione"].mean()
@@ -1314,9 +995,6 @@ display(low_correlation_df.style.set_table_styles(
 
 
 # ## Grafo con tutte le aree cerebrali 
-
-# In[96]:
-
 
 juelich_atlas = datasets.fetch_atlas_juelich('maxprob-thr25-1mm')
 juelich_atlas_img = juelich_atlas.maps
@@ -1386,9 +1064,6 @@ plt.axis('off')
 plt.show()
 
 
-# In[97]:
-
-
 num_nodes = G2.number_of_nodes()
 num_edges = G2.number_of_edges()
 density = nx.density(G2)
@@ -1408,16 +1083,8 @@ print(f"Coefficiente di clustering medio: {clustering_coefficient}")
 print(f"Diametro del grafo: {diameter}")
 print(f"Lunghezza media del cammino più breve: {avg_shortest_path}")
 
-
-# In[98]:
-
-
 degree_centrality = nx.degree_centrality(G2)
 betweenness_centrality = nx.betweenness_centrality(G2)
-
-
-# In[99]:
-
 
 sorted_degree = sorted(degree_centrality.items(), key=lambda x: x[1], reverse=True)
 sorted_betweenness = sorted(betweenness_centrality.items(), key=lambda x: x[1], reverse=True)
@@ -1432,8 +1099,6 @@ print("\nTop 5 Influencer (centralità di intermediazione):")
 for node, value in sorted_betweenness[:5]:
     print(f"{node}: {value}")
 
-
-# In[100]:
 
 
 node_corr_high = {node: 0 for node in G2.nodes}
@@ -1450,13 +1115,7 @@ for i, (node, count) in enumerate(top_high_corr_nodes[:5]):
 
 # ## Moduli grafo con tutte le regioni cerebrali 
 
-# In[101]:
-
-
 partition2 = community_louvain.best_partition(G2)
-
-
-# In[102]:
 
 
 if not partition2:
@@ -1492,15 +1151,9 @@ else:
             community_data.append({"Modulo": module, "Nodo": node})
 
     community_df = pd.DataFrame(community_data)
-
-
-# In[103]:
-
-
+    
 community_df
 
-
-# In[104]:
 
 
 communities = {}
@@ -1533,14 +1186,7 @@ for module, nodes in communities.items():
 
 statistics_df = pd.DataFrame(community_statistics)
 
-
-# In[105]:
-
-
 statistics_df
-
-
-# In[106]:
 
 
 x = np.arange(len(statistics_df["Modulo"]))
@@ -1563,9 +1209,6 @@ plt.tight_layout()
 plt.show()
 
 
-# In[107]:
-
-
 grouped_communities = community_df.groupby("Modulo")["Nodo"].apply(list).reset_index()
 
 for index, row in grouped_communities.iterrows():
@@ -1575,9 +1218,6 @@ for index, row in grouped_communities.iterrows():
 
 
 # ### valutiamo se la maschera del sistema specchio viene raggruppata in uno di questi moduli 
-
-# In[108]:
-
 
 labels_to_check = [
     "GM Anterior intra-parietal sulcus hIP1",
@@ -1637,9 +1277,6 @@ for label in labels_to_check:
         print(f"'{label}' non è stato trovato in nessun modulo.")
 
 
-# In[109]:
-
-
 region_module_data = []
 
 for label in labels_to_check:
@@ -1657,58 +1294,15 @@ for _, row in grouped_regions.iterrows():
     print("\n" + "-" * 50 + "\n")
 
 
-# Le aree del sistema specchio precedentemente mappate sono quasi tutte raggruppate nel modulo2. E' interessante il fatto che GM Broca's Area BA44, GM Inferior parietal lobule PGp e GM Premotor cortex BA6 sono raggruppate in un unico modulo, in quanto: 
-# 
-# __GM Broca's Area BA44__:
-# 
-# L'area di Broca (specialmente BA44, situata nell'emisfero sinistro) è coinvolta nel linguaggio, ma è anche associata all'osservazione e all'imitazione di azioni, che sono funzioni chiave del sistema specchio.
-# 
-# È parte della rete specchio, poiché è attiva durante compiti di osservazione e comprensione di azioni.
-# 
-# Studi suggeriscono che Broca BA44 potrebbe essere un punto di integrazione tra funzioni motorie e linguistiche.
-# 
-# __GM Inferior Parietal Lobule PGp__:
-# 
-# Il lobulo parietale inferiore (IPL), incluso PGp, è una delle principali aree del sistema specchio.
-# 
-# È coinvolto nell'elaborazione delle intenzioni associate alle azioni, come la comprensione del "perché" dietro un'azione osservata.
-# 
-# IPL lavora insieme alla corteccia premotoria per associare input visivi (osservazione di movimenti) con schemi motori interni.
-# 
-# __GM Premotor Cortex BA6__:
-# 
-# Il BA6 è una regione premotoria fondamentale per il sistema specchio.
-# 
-# È attiva durante l'osservazione e l'esecuzione di movimenti, nonché durante l'imitazione di azioni.
-# 
-# Funziona come un nodo centrale nella rete specchio, integrando informazioni motorie e percettive.
-# 
-
-# ## Confronto grafi (sistema specchio vs tutte le regioni)
-
-# In[110]:
-
 
 is_subgraph = nx.is_isomorphic(G, G2.subgraph(G.nodes))
 print(f"Is G a subgraph of G2? {is_subgraph}")
 
-
-# In[111]:
-
-
 node_overlap = len(set(G2.nodes) & set(G.nodes)) / len(G2.nodes)
 print(f"Percentuale di nodi di G in G2: {node_overlap * 100:.2f}%")
 
-
-# In[112]:
-
-
 edge_overlap = len(set(G2.edges) & set(G.edges)) / len(G2.edges)
 print(f"Percentuale di archi di G in G2: {edge_overlap * 100:.2f}%")
-
-
-# In[113]:
-
 
 pos = nx.spring_layout(G2, seed=42)  # Seed per layout stabile
 
@@ -1724,9 +1318,6 @@ nx.draw(
 plt.title("Grafo specchio sovrapposto", fontsize=16)
 
 plt.show()
-
-
-# In[114]:
 
 
 def calculate_graph_metrics(graph):
@@ -1748,18 +1339,7 @@ print("Confronto tra le metriche dei grafi:")
 display(comparison_df)
 
 
-# Questi risultati offrono una prospettiva neuroscientifica interessante, sottolineando il ruolo centrale del sistema specchio nell'elaborazione delle emozioni. Il fatto che il sottografo G, che rappresenta solo il 29% dei nodi e il 9% degli archi del grafo completo G2, mostri le stesse metriche di densità, diametro e clustering medio suggerisce che il sistema specchio costituisca un nucleo essenziale ed efficiente per questo specifico compito cognitivo. Nonostante la complessità della rete cerebrale complessiva rappresentata da G2, è evidente che le aree incluse in G, come l'area di Broca (BA44), il lobulo parietale inferiore (PGp) e la corteccia premotoria (BA6), siano sufficientemente interconnesse e ottimizzate per garantire una comunicazione rapida e precisa, necessaria per il riconoscimento emotivo.
-# 
-# Questa osservazione evidenzia come il sistema specchio possa funzionare come una rete specializzata, capace di sostenere da sola gran parte del carico funzionale richiesto dal compito, relegando il resto della rete cerebrale a un ruolo secondario o di supporto. La coesione e la densità massimale delle connessioni all'interno di G riflettono una struttura altamente coordinata, che minimizza la necessità di percorsi lunghi o complessi per la trasmissione dell'informazione. Inoltre, il diametro di 1, costante in entrambe le reti, indica che le informazioni possono essere condivise rapidamente tra tutte le aree, senza la necessità di passaggi intermedi.
-# 
-# Dal punto di vista funzionale, questi risultati possono essere interpretati come una dimostrazione della modularità del cervello. In altre parole, il sistema specchio agisce come un modulo indipendente e autosufficiente, capace di gestire funzioni altamente specifiche, come il riconoscimento delle emozioni. Questo non solo mette in evidenza l'efficienza di questa rete nella gestione del compito, ma suggerisce anche che il resto delle aree cerebrali incluse in G2 potrebbe avere un ruolo ridondante o meno rilevante in questo contesto.
-# 
-# Questi dati rafforzano l'idea che il cervello umano sia organizzato in sottoreti altamente specializzate, che entrano in azione in modo prioritario a seconda delle richieste del compito. Nel caso del riconoscimento emotivo, il sistema specchio emerge come un nucleo funzionale critico, capace di sostenere autonomamente gran parte delle richieste cognitive legate al compito, confermando il suo ruolo centrale nell'elaborazione delle emozioni e nell'empatia.
-
 # ## Maschera aree sistema specchio maggiormente rilevanti nel compito 
-
-# In[115]:
-
 
 juelich_atlas = datasets.fetch_atlas_juelich('maxprob-thr25-1mm')
 juelich_atlas_img = juelich_atlas.maps  # Oggetto NIfTI
@@ -1767,26 +1347,13 @@ juelich_data = juelich_atlas_img.get_fdata()
 print(f"Dimensioni dell'atlante Juelich: {juelich_data.shape} (x, y, z)")
 
 
-# In[116]:
-
-
 modulo_0_labels = ["GM Broca's area BA44", "GM Inferior parietal lobule PGp", "GM Premotor cortex BA6"]
-
-
-# In[117]:
-
 
 modulo_0_ids = [i for i, label in enumerate(labels) if label in modulo_0_labels]
 print(f"IDs delle regioni nel Modulo 0: {modulo_0_ids}")
 
 
-# In[118]:
-
-
 modulo_0_mask = np.isin(juelich_data, modulo_0_ids).astype(np.uint8)
-
-
-# In[119]:
 
 
 resampled_modulo_0_mask_img = resample_to_img(
@@ -1794,9 +1361,6 @@ resampled_modulo_0_mask_img = resample_to_img(
     target_img=fmri_img,
     interpolation="nearest",
 )
-
-
-# In[120]:
 
 
 if len(fmri_img.shape) == 4:
@@ -1836,10 +1400,3 @@ plot_roi(
     cmap=vivid_cmap  
 )
 plt.show()
-
-
-# In[ ]:
-
-
-
-
