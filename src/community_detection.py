@@ -40,9 +40,6 @@ for community, nodes in partition.items():
 partition2 = community_louvain.best_partition(G2)
 
 
-# In[102]:
-
-
 if not partition2:
     print("Errore: partition2 non contiene dati. Assicurati che i moduli siano stati calcolati correttamente.")
 else:
@@ -78,13 +75,7 @@ else:
     community_df = pd.DataFrame(community_data)
 
 
-# In[103]:
-
-
 community_df
-
-
-# In[104]:
 
 
 communities = {}
@@ -116,15 +107,7 @@ for module, nodes in communities.items():
     })
 
 statistics_df = pd.DataFrame(community_statistics)
-
-
-# In[105]:
-
-
 statistics_df
-
-
-# In[106]:
 
 
 x = np.arange(len(statistics_df["Modulo"]))
@@ -147,9 +130,6 @@ plt.tight_layout()
 plt.show()
 
 
-# In[107]:
-
-
 grouped_communities = community_df.groupby("Modulo")["Nodo"].apply(list).reset_index()
 
 for index, row in grouped_communities.iterrows():
@@ -159,9 +139,6 @@ for index, row in grouped_communities.iterrows():
 
 
 # ### valutiamo se la maschera del sistema specchio viene raggruppata in uno di questi moduli
-
-# In[108]:
-
 
 labels_to_check = [
     "GM Anterior intra-parietal sulcus hIP1",
