@@ -1,8 +1,4 @@
-Grafo
-maschera
-
-# In[67]:
-
+#Grafo maschera
 
 G = nx.Graph()
 
@@ -64,7 +60,6 @@ plt.axis('off')
 
 plt.show()
 
-# In[68]:
 
 
 areas_in_mask = np.unique(resampled_mask_data[resampled_mask_data > 0])
@@ -88,7 +83,6 @@ for area in areas_in_mask:
 for area, coord in coordinates_3d.items():
     print(f"Area {area}: Coordinate 3D = {coord}")
 
-# In[69]:
 
 
 # Dati delle coordinate (x, y) delle aree cerebrali (estratte da 3D)
@@ -178,10 +172,8 @@ plt.axis('off')
 plt.show()
 
 
+
 # ## Analisi del grafo maschera
-
-# In[70]:
-
 
 num_nodes = G.number_of_nodes()
 num_edges = G.number_of_edges()
@@ -203,15 +195,8 @@ print(f"Diametro del grafo: {diameter}")
 print(f"Lunghezza media del cammino più breve: {avg_shortest_path}")
 
 
-# In[71]:
-
-
 degree_centrality = nx.degree_centrality(G)
 betweenness_centrality = nx.betweenness_centrality(G)
-
-
-# In[72]:
-
 
 sorted_degree = sorted(degree_centrality.items(), key=lambda x: x[1], reverse=True)
 sorted_betweenness = sorted(betweenness_centrality.items(), key=lambda x: x[1], reverse=True)
@@ -227,8 +212,6 @@ for node, value in sorted_betweenness[:5]:
     print(f"{node}: {value}")
 
 
-# In[73]:
-
 
 node_corr_high = {node: 0 for node in G.nodes}
 for edge in high_corr_edges:
@@ -242,9 +225,6 @@ for i, (node, count) in enumerate(top_high_corr_nodes[:5]):
     print(f"{i+1}. {node}: {count} archi")
 
 # ## Grafo con tutte le aree cerebrali
-
-# In[96]:
-
 
 juelich_atlas = datasets.fetch_atlas_juelich('maxprob-thr25-1mm')
 juelich_atlas_img = juelich_atlas.maps
@@ -313,8 +293,6 @@ plt.title("Grafo con tutte le aree cerebrali", fontsize=16)
 plt.axis('off')
 plt.show()
 
-# In[97]:
-
 
 num_nodes = G2.number_of_nodes()
 num_edges = G2.number_of_edges()
@@ -336,14 +314,10 @@ print(f"Coefficiente di clustering medio: {clustering_coefficient}")
 print(f"Diametro del grafo: {diameter}")
 print(f"Lunghezza media del cammino più breve: {avg_shortest_path}")
 
-# In[98]:
 
 
 degree_centrality = nx.degree_centrality(G2)
 betweenness_centrality = nx.betweenness_centrality(G2)
-
-# In[99]:
-
 
 sorted_degree = sorted(degree_centrality.items(), key=lambda x: x[1], reverse=True)
 sorted_betweenness = sorted(betweenness_centrality.items(), key=lambda x: x[1], reverse=True)
@@ -357,8 +331,6 @@ for node, value in sorted_degree[:5]:
 print("\nTop 5 Influencer (centralità di intermediazione):")
 for node, value in sorted_betweenness[:5]:
     print(f"{node}: {value}")
-
-# In[100]:
 
 
 node_corr_high = {node: 0 for node in G2.nodes}
